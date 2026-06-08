@@ -76,8 +76,7 @@ backend/.env
 backend/ml/model.pkl
 backend/ml/preprocessor.pkl
 
-# Dataset (download separately from Kaggle)
-data/*.csv
+# Dataset
 data/*.xlsx
 
 # Secrets / env
