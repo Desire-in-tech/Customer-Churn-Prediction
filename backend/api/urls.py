@@ -3,8 +3,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("predict", views.predict_customer, name="predict_no_slash"),
     path("predict/", views.predict_customer, name="predict"),
+    path("dashboard/stats", views.dashboard_stats, name="dashboard_stats_no_slash"),
     path("dashboard/stats/", views.dashboard_stats, name="dashboard_stats"),
+    path("predictions/history", views.prediction_history, name="prediction_history_no_slash"),
     path("predictions/history/", views.prediction_history, name="prediction_history"),
+    path("healthz", views.health_check, name="health_check_no_slash"),
     path("healthz/", views.health_check, name="health_check"),
 ]

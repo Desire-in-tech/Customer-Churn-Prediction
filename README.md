@@ -29,33 +29,42 @@ Telecom companies lose \$1,000–\$3,000 per churned customer in acquisition cos
 
 ```
 customer-churn-app/
-├── frontend/                  # React + Vite application
-│   └── src/
-│       ├── App.jsx
-│       ├── Predict.jsx        # Prediction page
-│       ├── CustomerForm.jsx   # Input form
-│       └── PredictionCard.jsx # Results display
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   ├── pages/
+│   │   │   ├── Dashboard.tsx
+│   │   │   └── Predict.tsx
+│   │   ├── components/
+│   │   │   ├── CustomerForm.tsx
+│   │   │   └── PredictionCard.tsx
+│   │   └── lib/
+│   │       └── api.ts
+│   ├── package.json
+│   └── vite.config.ts
 │
-├── backend/                   # Django REST API
+├── backend/
 │   ├── api/
-│   │   ├── views.py           # Request handling + business logic
-│   │   ├── urls.py            # URL routing
-│   │   └── serializers.py     # Input validation
+│   │   ├── views.py
+│   │   ├── urls.py
+│   │   └── serializers.py
 │   ├── ml/
-│   │   ├── predictor.py       # Model inference bridge
-│   │   ├── model.pkl          # Trained XGBoost model (generated)
-│   │   └── preprocessor.pkl   # Fitted preprocessor (generated)
+│   │   ├── predictor.py
+│   │   ├── model.pkl
+│   │   └── preprocessor.pkl
 │   ├── settings.py
 │   ├── manage.py
 │   └── requirements.txt
 │
 ├── notebooks/
-│   └── churn_model.ipynb      # Full ML pipeline
+│   └── churn_model.ipynb
 │
 ├── data/
-│   └── telco_churn.csv        # IBM Telco dataset (download separately)
+│   └── telco_churn.csv
 │
 ├── README.md
+├── render.yaml
 └── .gitignore
 ```
 
@@ -110,10 +119,18 @@ python manage.py runserver 8000
 
 ### 4. Run the Frontend
 
+Set the backend API URL, then run the Vite app:
+
 ```bash
 cd frontend
 npm install
 npm run dev
+```
+
+For local development, create a `.env` file in `frontend/` with:
+
+```bash
+VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
 ---
@@ -207,9 +224,13 @@ After training with the full IBM Telco dataset, typical results:
 
 1. Push this repository to GitHub
 2. Connect the GitHub repo to [Render](https://render.com)
-3. Create two services:
-   - **Web Service** (Django): root `backend/`, build command `pip install -r requirements.txt`, start command `gunicorn wsgi:application`
-   - **Static Site** (React): root `frontend/`, build command `npm run build`, publish directory `dist`
+3. Use the included `render.yaml`, which creates:
+   - **Web Service**: Django API from `backend/`
+   - **Static Site**: React app from `frontend/`
+
+Before deploying, run the notebook and commit these generated files:
+- `backend/ml/model.pkl`
+- `backend/ml/preprocessor.pkl`
 
 ---
 

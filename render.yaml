@@ -22,9 +22,9 @@ services:
   - type: web
     name: churn-frontend
     runtime: static
-    rootDir: .
-    buildCommand: npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @workspace/frontend run build
-    staticPublishPath: artifacts/frontend/dist/public
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
         fromService:

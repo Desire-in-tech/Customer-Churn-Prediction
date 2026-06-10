@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .serializers import CustomerSerializer
-from backend.ml.predictor import ChurnPredictor, ModelNotLoadedError
+from ml.predictor import ChurnPredictor, ModelNotLoadedError
 
 predictor = ChurnPredictor(
     model_path=str(settings.ML_MODEL_PATH),

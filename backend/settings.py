@@ -1,14 +1,14 @@
 """
 Django settings for Customer Churn Prediction API.
 """
+
 import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 
 SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-churn-prediction-dev-key-change-in-production"
+    "DJANGO_SECRET_KEY", "django-insecure-churn-prediction-dev-key-change-in-production"
 )
 
 DEBUG = os.environ.get("DEBUG", "True") == "True"
@@ -27,6 +27,7 @@ if DEBUG or os.environ.get("ALLOW_ALL_HOSTS"):
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.auth",
+    "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
     "api",
