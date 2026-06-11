@@ -1,92 +1,127 @@
-# Customer Churn Prediction System
+# Customer Churn Prediction App
 
-> Predict which telecom customers are likely to leave — and why.
+> End-to-end churn prediction and explainable machine learning for telecom customer retention.
 
-A full-stack ML application built with **React**, **Django REST Framework**, and **XGBoost**. Given a customer's account details, the system predicts churn probability, assigns a risk level (Low / Medium / High), and surfaces the top SHAP-derived risk factors driving the prediction.
+A full-stack machine learning project that predicts whether a telecom customer is likely to churn and explains the prediction with **SHAP**. Built with **React**, **Django REST Framework**, and **XGBoost**, the application combines interactive customer risk scoring, model interpretability, and business-oriented retention insights in a single end-to-end system.
 
 ---
 
 ## Project Overview
 
+This project combines a **React frontend**, **Django REST API**, and an **XGBoost churn model** to predict whether a telecom customer is likely to leave and explain the prediction with SHAP.
+
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| Frontend | React + Vite | Customer form, prediction display, dashboard |
+| Frontend | React + Vite | Customer input form, results display, dashboard |
 | Backend | Django REST Framework | Validation, preprocessing, model inference |
-| ML Model | XGBoost + SHAP | Binary churn classification + explainability |
+| ML Model | XGBoost + SHAP | Binary churn prediction with explainability |
 | Dataset | IBM Telco Customer Churn | 7,043 customer records |
 
 ## Business Problem
 
-Telecom companies lose \$1,000–\$3,000 per churned customer in acquisition costs alone. This system:
+Telecom companies lose \$1,000–\$3,000 per churned customer in acquisition costs alone. This project helps teams:
 
-- Identifies at-risk customers **before** they cancel
-- Explains **why** they are at risk (SHAP)
-- Provides **actionable retention strategies** for each risk factor
+- identify at-risk customers **before** they cancel
+- understand **why** a customer is likely to churn
+- connect model outputs to **actionable retention strategies**
+
+## Key Results
+
+- **Cross-validation ROC-AUC:** ~0.8405
+- **Test ROC-AUC:** ~0.8398
+- **Most important churn drivers:** month-to-month contracts, short tenure, no online security, no tech support, high monthly charges, fiber optic service, and electronic check payments
+- **Business takeaway:** the notebook estimates that a **15% churn reduction could produce over \$1 million in impact** through retained revenue and avoided acquisition costs
+
+## Key Visualizations
+
+These visuals are generated from `notebooks/churn_model.ipynb` and saved in `data/`.
+
+### 1. Churn Distribution
+
+The dataset is clearly imbalanced, with far more customers staying than churning.
+
+![Churn distribution](data/eda_churn_distribution.png)
+
+### 2. Churn Rate by Key Categorical Features
+
+Contract type, internet service, payment method, and support-related features show strong churn differences.
+
+![Churn rate by categorical features](data/eda_categorical_vs_churn.png)
+
+### 3. Feature Engineering Insights
+
+The engineered features confirm that newer customers and lower-value segments churn at notably higher rates.
+
+![Feature engineering insights](data/feat_eng_viz.png)
+
+### 4. Correlation Heatmap
+
+Numeric relationships in the cleaned dataset show churn moving inversely with tenure and positively with monthly charges.
+
+![Correlation heatmap](data/eda_correlation_heatmap.png)
+
+### 5. Model Evaluation
+
+The confusion matrix, ROC curve, and precision-recall curve summarize how the classifier performs on unseen test data.
+
+![Model evaluation](data/model_evaluation.png)
+
+### 6. SHAP Summary Plot
+
+The SHAP beeswarm plot highlights the features with the greatest impact on churn predictions across the dataset.
+
+![SHAP summary plot](data/shap_summary_beeswarm.png)
+
+---
+
+## ML Workflow Summary
+
+The notebook `notebooks/churn_model.ipynb` covers the full workflow from raw dataset to deployment-ready artifacts.
+
+1. **Load and explore the data** to inspect class balance, feature distributions, and churn patterns.
+2. **Clean the dataset** by fixing `TotalCharges`, handling missing values, dropping `customerID`, and encoding `Churn`.
+3. **Engineer domain features** including `tenure_group`, `avg_monthly_spend`, `has_multiple_services`, `contract_risk_score`, and `customer_value_segment`.
+4. **Preprocess inputs** with a `ColumnTransformer` using scaling, one-hot encoding, and passthrough numeric features.
+5. **Balance the training data with SMOTE** before fitting the XGBoost classifier.
+6. **Evaluate the model** with confusion matrix, ROC, precision-recall, and standard classification metrics.
+7. **Explain predictions with SHAP** using global and local interpretation plots.
+8. **Save and verify artifacts** in `backend/ml/` for backend inference.
+
+### Notebook Deliverables
+
+The final notebook cells save and verify:
+
+- `backend/ml/model.pkl`
+- `backend/ml/preprocessor.pkl`
+- evaluation plots in `data/`
+- SHAP visualizations in `data/`
 
 ---
 
 ## Project Structure
 
-```
-customer-churn-app/
-├── frontend/
-│   ├── src/
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   ├── pages/
-│   │   │   ├── Dashboard.tsx
-│   │   │   └── Predict.tsx
-│   │   ├── components/
-│   │   │   ├── CustomerForm.tsx
-│   │   │   └── PredictionCard.tsx
-│   │   └── lib/
-│   │       └── api.ts
-│   ├── package.json
-│   └── vite.config.ts
-│
+```text
+Customer-Churn-Prediction/
 ├── backend/
 │   ├── api/
-│   │   ├── views.py
-│   │   ├── urls.py
-│   │   └── serializers.py
 │   ├── ml/
-│   │   ├── predictor.py
 │   │   ├── model.pkl
 │   │   └── preprocessor.pkl
-│   ├── settings.py
 │   ├── manage.py
 │   └── requirements.txt
-│
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.ts
 ├── notebooks/
 │   └── churn_model.ipynb
-│
 ├── data/
-│   └── telco_churn.csv
-│
+│   ├── telco_churn.csv
+│   └── *.png
 ├── README.md
 ├── render.yaml
 └── .gitignore
 ```
-
----
-
-## ML Pipeline (Notebook)
-
-The notebook `notebooks/churn_model.ipynb` covers the full pipeline:
-
-1. **Import Libraries** — pandas, numpy, sklearn, xgboost, shap, imbalanced-learn
-2. **Load Dataset** — Read IBM Telco CSV, inspect shape/types
-3. **EDA** — Churn distribution, contract type vs churn, tenure & charges distributions, correlation heatmap
-4. **Data Cleaning** — Fix TotalCharges dtype, handle nulls, drop customerID
-5. **Feature Engineering** — Tenure groups, avg monthly spend, service count flags, contract risk score, customer value segment
-6. **Preprocessing** — OneHotEncoder + StandardScaler via ColumnTransformer pipeline
-7. **Train-Test Split** — 80/20 stratified split
-8. **Balance Classes** — SMOTE oversampling
-9. **Model Training** — XGBoost classifier
-10. **Model Evaluation** — Accuracy, Precision, Recall, F1, ROC-AUC, confusion matrix, ROC curve
-11. **SHAP Analysis** — Global summary plots, feature importance bar chart, local force plot, waterfall plot
-12. **Business Insights** — Retention strategy recommendations per risk factor
-13. **Save Artifacts** — `model.pkl` and `preprocessor.pkl` to `backend/ml/`
 
 ---
 
@@ -101,6 +136,36 @@ https://www.kaggle.com/datasets/blastchar/telco-customer-churn
 ```
 
 Save it as: `data/telco_churn.csv`
+
+**Expected filename:** `data/telco_churn.csv`
+
+**Dataset size:** ~7,043 rows × 21 columns
+
+#### Dataset Columns
+
+| Column | Type | Description |
+|--------|------|-------------|
+| customerID | string | Unique customer identifier (dropped during cleaning) |
+| gender | string | Male / Female |
+| SeniorCitizen | int | 0 = No, 1 = Yes |
+| Partner | string | Yes / No |
+| Dependents | string | Yes / No |
+| tenure | int | Months with company |
+| PhoneService | string | Yes / No |
+| MultipleLines | string | Yes / No / No phone service |
+| InternetService | string | DSL / Fiber optic / No |
+| OnlineSecurity | string | Yes / No / No internet service |
+| OnlineBackup | string | Yes / No / No internet service |
+| DeviceProtection | string | Yes / No / No internet service |
+| TechSupport | string | Yes / No / No internet service |
+| StreamingTV | string | Yes / No / No internet service |
+| StreamingMovies | string | Yes / No / No internet service |
+| Contract | string | Month-to-month / One year / Two year |
+| PaperlessBilling | string | Yes / No |
+| PaymentMethod | string | Electronic check / Mailed check / Bank transfer / Credit card |
+| MonthlyCharges | float | Monthly bill amount |
+| TotalCharges | string | Total amount charged (may need type conversion) |
+| Churn | string | Target: Yes / No |
 
 ### 2. Train the Model (Google Colab / Jupyter)
 
@@ -194,17 +259,17 @@ Returns the 20 most recent predictions made in this session.
 
 ## Model Performance
 
-After training with the full IBM Telco dataset, typical results:
+The notebook evaluation reports the following test-set results:
 
 | Metric | Score |
 |--------|-------|
-| Accuracy | ~82% |
-| Precision | ~70% |
-| Recall | ~78% |
-| F1 Score | ~74% |
-| ROC-AUC | ~85% |
+| Accuracy | ~78.35% |
+| Precision | ~0.59 |
+| Recall | ~0.60 |
+| F1 Score | ~0.59 |
+| ROC-AUC | ~0.8398 |
 
-> These improve with hyperparameter tuning.
+> Recall is especially important in churn prediction because false negatives can hide customers who are likely to leave.
 
 ---
 
